@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-简化字转换程序（单文件版 v5.2）
+简化字转换程序（单文件版 v5.3）
 
 目录结构：
-    wzgg_converter_v5_2.py
+    wzgg_converter.py
     code/
         1977.wzgg
         1977A.wzgg
     待转换文件.txt
 
 运行：
-    python wzgg_converter_v5_2.py
+    python wzgg_converter.py
 
 功能：
 1. 扫描 code 目录中名称为“4位年份 + 可选1位大写字母”的 .wzgg 字表。
@@ -49,7 +49,7 @@ from typing import Iterable, Optional
 # 基本配置
 # ============================================================
 
-PROGRAM_VERSION = "5.2.0"
+PROGRAM_VERSION = "5.3.0"
 BASE_DIR = Path(__file__).resolve().parent
 CODE_DIR = BASE_DIR / "code"
 ERROR_REPORT_PATH = BASE_DIR / "字表错误报告.txt"
@@ -1007,6 +1007,12 @@ def run() -> int:
     for source_path in text_files:
         output_name = f"{source_path.stem}（{selected_path.stem}）.wzgg"
         output_path = source_path.with_name(output_name)
+
+        # 已存在同名转换结果时跳过，避免重复转换和覆盖。
+        if output_path.exists():
+            print(f"跳过：{output_path.name} 已存在")
+            continue
+
         try:
             converter.convert_file(source_path, output_path)
             print(f"完成：{source_path.name} -> {output_path.name}")
